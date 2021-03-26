@@ -1,8 +1,6 @@
 const Event = require("../structures/Event");
 
-module.exports = class extends (
-	Event
-) {
+module.exports = class extends Event {
 	constructor(...args) {
 		super(...args);
 	}
@@ -19,49 +17,8 @@ module.exports = class extends (
 
 		const command = this.client.commands.get(cmd.toLowerCase()) || this.client.commands.get(this.client.aliases.get(cmd.toLowerCase()));
 		if (command) {
-			const userPermCheck = command.userPerms ? this.client.defaultPerms.add(command.userPerms) : this.client.defaultPerms;
-			if (userPermCheck) {
-				const missing = message.channel.permissionsFor(message.member).missing(userPermCheck);
-				if (missing.length) {
-					return message.channel.send(this.client.bulbutils.translate("global_missing_permission")).then(msg => {
-						message.delete({ timeout: 5000 });
-						msg.delete({ timeout: 5000 });
-					});
-				}
-			}
-
-			const clientPermCheck = command.userPerms ? this.client.defaultPerms.add(command.clientPerms) : this.client.defaultPerms;
-			if (clientPermCheck) {
-				const missing = message.channel.permissionsFor(message.member).missing(clientPermCheck);
-				if (missing.length) {
-					return message.channel.send(this.client.bulbutils.translate("global_missing_permission_bot"));
-				}
-			}
-
 			const developers = process.env.DEVELOPERS.split(",");
 			if (command.devOnly) if (!developers.includes(message.author.id)) return;
-
-			if (command.maxArgs < args.length && command.maxArgs !== -1) {
-				return message.channel.send(
-					this.client.bulbutils.translate("event_message_args_unexpected", {
-						arg: args[command.maxArgs],
-						arg_expected: command.maxArgs,
-						arg_provided: args.length,
-						usage: command.usage,
-					}),
-				);
-			}
-
-			if (command.minArgs > args.length) {
-				return message.channel.send(
-					this.client.bulbutils.translate("event_message_args_missing", {
-						arg: command.argList[args.length],
-						arg_expected: command.minArgs,
-						arg_provided: args.length,
-						usage: command.usage,
-					}),
-				);
-			}
 
 			command.run(message, args);
 		}

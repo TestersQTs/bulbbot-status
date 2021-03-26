@@ -1,17 +1,11 @@
 const Command = require("./../../structures/Command");
 
-module.exports = class extends (
-	Command
-) {
+module.exports = class extends Command {
 	constructor(...args) {
 		super(...args, {
 			description: "Evaluates the provided JavaScript code",
 			category: "Admin",
 			aliases: ["ev"],
-			usage: "!eval <code>",
-			minArgs: 1,
-			maxArgs: -1,
-			argList: ["code:string"],
 			devOnly: true,
 		});
 	}
